@@ -1,0 +1,5 @@
+
+1.02    2005-03-05 22:00
+        added divmod, quorem methods
+        added _op_n (tentative)
+        100% test coverage
