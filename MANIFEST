@@ -8,3 +8,4 @@ t/basics.t
 t/stacks.t
 t/pod.t
 t/pod-coverage.t
+t/perl-critic.t
