@@ -1,0 +1,7 @@
+README for Math::Calculator
+
+This class implements a simple stack-based calculator.  At present, it isn't
+directly useful, and you may be better served by Parse::RPN or Math::RPN.
+While I intend to make it more useful per se, it is already useful to me as a
+training tool.  I provide the documentation and tests to students learning Perl
+and ask them to implement code to make the tests pass.
