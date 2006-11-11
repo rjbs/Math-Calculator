@@ -1,4 +1,7 @@
 
+1.021   2006-11-10
+        packaging and formatting changes
+
 1.02    2005-03-05 22:00
         added divmod, quorem methods
         added _op_n (tentative)

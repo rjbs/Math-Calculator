@@ -1,6 +1,8 @@
+use strict;
+use warnings;
 
 package Math::Calculator;
-$Math::Calculator::VERSION = '1.02';
+our $VERSION = '1.021';
 
 =head1 NAME
 
@@ -8,9 +10,9 @@ Math::Calculator -- a multi-stack calculator class
 
 =head1 VERSION
 
-version 1.02
+version 1.021
 
- $Id: Calculator.pm,v 1.6 2005/03/06 03:09:16 rjbs Exp $
+ $Id$
 
 =head1 SYNOPSIS
 
@@ -28,9 +30,6 @@ Math::Calculator is a simple class representing a stack-based calculator.  It
 can have an arbitrary number of stacks.
 
 =cut
-
-use strict;
-use warnings;
 
 =head1 METHODS
 
@@ -105,7 +104,9 @@ C<push_to> is identical to C<push>, but pushes onto the named stack.
 
 =cut
 
-sub push { push @{(shift)->stack}, @_; }
+sub push { ## no critic
+  push @{(shift)->stack}, @_;
+}
 sub push_to { CORE::push @{(shift)->stack(shift)}, @_; }
 
 =item C<< pop($howmany) >>
@@ -119,7 +120,9 @@ C<pop_from> is identical to C<pop>, but pops from the named stack.
 
 =cut
 
-sub pop { splice @{$_[0]->stack}, - (defined $_[1] ? $_[1] : 1); }
+sub pop { ## no critic
+  splice @{$_[0]->stack}, - (defined $_[1] ? $_[1] : 1);
+}
 sub pop_from { splice @{$_[0]->stack($_[1])}, - (defined $_[2] ? $_[2] : 1); }
 
 =item C<< from_to($from_stack, $to_stack, [ $howmany ]) >>
@@ -233,10 +236,12 @@ root.
 
 =cut
 
+## no critic Subroutines::ProhibitBuiltinHomonyms
 sub modulo   { (shift)->_op_two( sub { (shift) % (shift) } ); }
+sub sqrt     { my ($self) = @_; $self->push(2); $self->root; }
+## use critic
 sub raise_to { (shift)->_op_two( sub { (shift) **(shift) } ); }
 sub root     { (shift)->_op_two( sub { (shift)**(1/(shift)) } ); }
-sub sqrt     { my ($self) = @_; $self->push(2); $self->root; }
 
 =item C<< quorem >>
 
@@ -273,7 +278,7 @@ added easily.
 
 =back
 
-=head1 AUTHORS
+=head1 AUTHOR
 
 Ricardo SIGNES, E<lt>rjbs@cpan.orgE<gt>
 
@@ -288,4 +293,3 @@ Math::Calculator is available under the same terms as Perl itself.
 =cut
 
 1;
-
