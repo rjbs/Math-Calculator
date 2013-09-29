@@ -1,8 +1,12 @@
+Release history for Math-Calculator
 
-1.021   2006-11-10
-        packaging and formatting changes
+{{$NEXT}}
+          update packaging (for future updates for future teaching toolness)
 
-1.02    2005-03-05 22:00
-        added divmod, quorem methods
-        added _op_n (tentative)
-        100% test coverage
+1.021     2006-11-10
+          packaging and formatting changes
+
+1.02      2005-03-05 22:00
+          added divmod, quorem methods
+          added _op_n (tentative)
+          100% test coverage

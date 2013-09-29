@@ -1,18 +1,7 @@
 use strict;
 use warnings;
-
 package Math::Calculator;
-our $VERSION = '1.021';
-
-=head1 NAME
-
-Math::Calculator -- a multi-stack calculator class
-
-=head1 VERSION
-
-version 1.021
-
- $Id$
+# ABSTRACT: a multi-stack calculator class
 
 =head1 SYNOPSIS
 
@@ -29,13 +18,7 @@ version 1.021
 Math::Calculator is a simple class representing a stack-based calculator.  It
 can have an arbitrary number of stacks.
 
-=cut
-
-=head1 METHODS
-
-=over
-
-=item C<< new >>
+=method new
 
 This class method returns a new Math::Calculator object with one stack
 ("default").
@@ -49,7 +32,9 @@ sub new {
 	} => shift
 }
 
-=item C<< current_stack($stackname) >>
+=method current_stack
+
+  $calc->current_stack($stackname)
 
 This method sets the current stack to the named stack.  If no stack by the
 given name exists, one is created and begins life empty.  Stack names are
@@ -68,7 +53,9 @@ sub current_stack {
 	$self->{current_stack} = $stack;
 }
 
-=item C<< stack($stackname) >>
+=method stack
+
+  $calc->stack($stackname)
 
 This method returns a (array) reference to the stack named, or the current
 selected stack, if none is named.
@@ -77,7 +64,9 @@ selected stack, if none is named.
 
 sub stack { $_[0]->{stacks}->{$_[1] ? $_[1] : $_[0]->current_stack} }
 
-=item C<< top >>
+=method top
+
+  $calc->top
 
 This method returns the value of the top element on the current stack without
 altering the stack's contents.
@@ -86,7 +75,9 @@ altering the stack's contents.
 
 sub top   { (shift)->stack->[-1] }
 
-=item C<< clear >>
+=method clear
+
+  $calc->clear
 
 This clears the current stack, setting it to C<()>.
 
@@ -94,11 +85,15 @@ This clears the current stack, setting it to C<()>.
 
 sub clear { @{(shift)->stack} = (); }
 
-=item C<< push(@elements) >>
+=method push
+
+  $calc->push(@elements);
 
 C<push> pushes the given elements onto the stack in the order given.
 
-=item C<< push_to($stackname, @elements) >>
+=method push_to
+
+  $calc->push_to($stackname, @elements)
 
 C<push_to> is identical to C<push>, but pushes onto the named stack.
 
@@ -109,14 +104,19 @@ sub push { ## no critic
 }
 sub push_to { CORE::push @{(shift)->stack(shift)}, @_; }
 
-=item C<< pop($howmany) >>
+=method pop
+
+  $calc->pop($howmany)
 
 This method pops C<$howmany> elements off the current stack, or one element, if
 C<$howmany> is not defined.
 
-=item C<< pop_from($stackname, [ $howmany ]) >>
+=method pop_from
 
-C<pop_from> is identical to C<pop>, but pops from the named stack.
+  $calc->pop_from($stack, $howmany);
+
+C<pop_from> is identical to C<pop>, but pops from the named stack.  C<$howmany>
+defaults to 1.
 
 =cut
 
@@ -125,7 +125,9 @@ sub pop { ## no critic
 }
 sub pop_from { splice @{$_[0]->stack($_[1])}, - (defined $_[2] ? $_[2] : 1); }
 
-=item C<< from_to($from_stack, $to_stack, [ $howmany ]) >>
+=method from_to
+
+  $calc->from_to($from_stack, $to_stack, [ $howmany ])
 
 This pops a value from one stack and pushes it to another.
 
@@ -133,7 +135,9 @@ This pops a value from one stack and pushes it to another.
 
 sub from_to { $_[0]->push_to($_[2], $_[0]->pop_from($_[1], $_[3])) }
 
-=item C<< dupe >>
+=method dupe
+
+  $calc->dupe;
 
 C<dupe> duplicates the top value on the current stack.  It's identical to C<<
 $calc->push($calc->top) >>.
@@ -142,7 +146,9 @@ $calc->push($calc->top) >>.
 
 sub dupe { $_[0]->push( $_[0]->top ); }
 
-=item C<< _op_two($coderef) >>
+=method _op_two
+
+  $calc->_op_two($coderef)
 
 This method, which is only semi-private because it may be slightly refactored
 or renamed in the future (possibly to operate on I<n> elements), pops two
@@ -158,7 +164,7 @@ sub _op_n {
 	wantarray ? @r : $r[-1]
 }
 
-=item C<< twiddle >>
+=method twiddle
 
 This reverses the position of the top two elements on the current stack.
 
@@ -166,7 +172,7 @@ This reverses the position of the top two elements on the current stack.
 
 sub twiddle  { (shift)->_op_two( sub { $_[1], $_[0] } ); }
 
-=item C<< add >>
+=method add
 
  x = pop; y = pop;
  push x + y;
@@ -174,7 +180,7 @@ sub twiddle  { (shift)->_op_two( sub { $_[1], $_[0] } ); }
 This pops the top two values from the current stack, adds them, and pushes the
 result.
 
-=item C<< subtract >>
+=method subtract
 
  x = pop; y = pop;
  push x - y;
@@ -182,7 +188,7 @@ result.
 This pops the top two values from the current stack, subtracts the second from
 the first, and pushes the result.
 
-=item C<< multiply >>
+=method multiply
 
  x = pop; y = pop;
  push x * y;
@@ -190,7 +196,7 @@ the first, and pushes the result.
 This pops the top two values from the current stack, multiplies them, and
 pushes the result.
 
-=item C<< divide >>
+=method divide
 
  x = pop; y = pop;
  push x / y;
@@ -205,7 +211,7 @@ sub subtract { (shift)->_op_two( sub { (shift) - (shift) } ); }
 sub multiply { (shift)->_op_two( sub { (shift) * (shift) } ); }
 sub divide   { (shift)->_op_two( sub { (shift) / (shift) } ); }
 
-=item C<< modulo >>
+=method modulo
 
  x = pop; y = pop;
  push x % y;
@@ -213,7 +219,7 @@ sub divide   { (shift)->_op_two( sub { (shift) / (shift) } ); }
 This pops the top two values from the current stack, computes the first modulo
 the second, and pushes the result.
 
-=item C<< raise_to >>
+=method raise_to
 
  x = pop; y = pop;
  push x ** y;
@@ -221,7 +227,7 @@ the second, and pushes the result.
 This pops the top two values from the current stack, raises the first to the
 power of the second, and pushes the result.
 
-=item C<< root >>
+=method root
 
  x = pop; y = pop;
  push x ** (1/y);
@@ -229,7 +235,7 @@ power of the second, and pushes the result.
 This pops the top two values from the current stack, finds the I<y>th root of
 I<x>, and pushes the result.
 
-=item C<< sqrt >>
+=method sqrt
 
 This method pops the top value from the current stack and pushes its square
 root.
@@ -243,9 +249,9 @@ sub sqrt     { my ($self) = @_; $self->push(2); $self->root; }
 sub raise_to { (shift)->_op_two( sub { (shift) **(shift) } ); }
 sub root     { (shift)->_op_two( sub { (shift)**(1/(shift)) } ); }
 
-=item C<< quorem >>
+=method quorem
 
-=item C<< divmod >>
+=method divmod
 
 This method pops two values from the stack and divides them.  It pushes the
 integer part of the quotient, and then the remainder.
@@ -255,8 +261,6 @@ integer part of the quotient, and then the remainder.
 sub _quorem  { my ($n,$m) = @_; (int($n/$m), $n % $m) }
 sub quorem   { (shift)->_op_n(2, \&_quorem ); }
 sub divmod   { (shift)->_op_n(2, \&_quorem ); }
-
-=back
 
 =head1 TODO
 
@@ -270,25 +274,15 @@ added easily.
 
 =head1 SEE ALSO
 
-=over
+=for :list
+* L<Math::RPN>
+* L<Parse::RPN>
 
-=item * L<Math::RPN>
-
-=item * L<Parse::RPN>
-
-=back
-
-=head1 AUTHOR
-
-Ricardo SIGNES, E<lt>rjbs@cpan.orgE<gt>
+=head1 THANKS
 
 Thanks, also, to Duan TOH.  I spent a few days giving him a crash course in
 intermediate Perl and became interested in writing this class when I used it as
 a simple example of how objects in Perl work.
-
-=head1 COPYRIGHT
-
-Math::Calculator is available under the same terms as Perl itself.
 
 =cut
 
